@@ -34,7 +34,7 @@ class OCRService
 
             if ($birthdateIdentidata !== $birthdateRequest) {
                 $signatureRequest->histories()->create([
-                    'message' => 'La fecha de nacimiento no coincide por favor revisela.',
+                    'description' => 'La fecha de nacimiento no coincide por favor revisela.',
                 ]);
                 return false;
             }
@@ -44,7 +44,7 @@ class OCRService
 
             if (!empty(array_diff($palabrasRequest, $palabrasIdentidata))) {
                 $signatureRequest->histories()->create([
-                    'message' => "El nombre parece estar mal escrito. "
+                    'description' => "El nombre parece estar mal escrito. "
                         . "Registrado: '$nombreRequest', Identidata: '$nombreIdentidata'.",
                 ]);
                 return false;
@@ -60,7 +60,7 @@ class OCRService
 
         if (!$documentFro || !$documentPos) {
             $signatureRequest->histories()->create([
-                'message' => 'No se encontraron los documentos de cédula (frontal/posterior).',
+                'description' => 'No se encontraron los documentos de cédula (frontal/posterior).',
             ]);
             return false;
         }
@@ -86,14 +86,14 @@ class OCRService
 
         if ($nroDocumento !== $signatureRequest->nro_documento) {
             $signatureRequest->histories()->create([
-                'message' => 'El número de cédula del OCR no coincide.',
+                'description' => 'El número de cédula del OCR no coincide.',
             ]);
             return false;
         }
 
         if ($fechaOcr !== $fechaRequest) {
             $signatureRequest->histories()->create([
-                'message' => "La fecha de nacimiento del OCR no coincide. "
+                'description' => "La fecha de nacimiento del OCR no coincide. "
                     . "OCR: '$fechaOcr', Registrada: '$fechaRequest'.",
             ]);
             return false;
@@ -101,14 +101,14 @@ class OCRService
 
         if (!preg_match('/^[A-Z]\d{4}[A-Z]\d{4}$/i', $ocr['codigoDactilar'])) {
             $signatureRequest->histories()->create([
-                'message' => "El código dactilar del OCR tiene un formato inválido: '{$ocr['codigoDactilar']}'.",
+                'description' => "El código dactilar del OCR tiene un formato inválido: '{$ocr['codigoDactilar']}'.",
             ]);
             return false;
         }
 
         if (Str::lower($ocr['codigoDactilar']) !== Str::lower($signatureRequest->codigo_dactilar)) {
             $signatureRequest->histories()->create([
-                'message' => "El código dactilar no coincide. "
+                'description' => "El código dactilar no coincide. "
                     . "OCR: '{$ocr['codigoDactilar']}', Registrado: '$signatureRequest->codigo_dactilar'.",
             ]);
             return false;
