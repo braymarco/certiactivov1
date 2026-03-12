@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Handle Front Controller...
+# Handle Authorization Header
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+RewriteCond %{REQUEST_URI} !(\.md|\.css|\.mp4|\.ico|\.js|\.png|\.woff2|\.woff|\.ttf|\.jpg|\.gif|\.svg|\.json|robots\.txt)$ [NC]
+
+
+RewriteRule ^ server.php [L]
+
+
+RewriteRule ^(.*)$ public/$1 [L,NC]
