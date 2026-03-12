@@ -21,6 +21,7 @@ use App\Facades\HistoryFacade;
 use App\Facades\Notify;
 use App\Facades\SignatureRequestFacade;
 use App\Helpers\ValidarIdentificacion;
+use App\Jobs\SignatureAIVerifierJob;
 use App\Models\Canton;
 use App\Models\Cliente;
 use App\Models\Document;
@@ -361,6 +362,7 @@ class SignatureRequestController extends Controller
         //envia el enlace por los medio de comunicación
         $this->request->flush();
         SignatureRequestFacade::notificarSolicitudCliente($signatureRequest);
+        SignatureAIVerifierJob::dispatch($signatureRequest);
         return view('success', [
             'proceso' => $signatureRequest
         ]);
