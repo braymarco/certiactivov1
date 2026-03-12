@@ -22,7 +22,7 @@ class HelperController extends Controller
         $b64 = base64_encode($document->content());
         $message = 'Cuál es el código dactilar?';
         $res = Dashscope::ocr($b64,$message);
-
+        //guzzle
         die($res);
     }
 }
