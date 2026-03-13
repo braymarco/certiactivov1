@@ -24,7 +24,7 @@ class OCRService
             $nombreRequest = Str::lower(trim("$signatureRequest->nombres $signatureRequest->apellido1 $signatureRequest->apellido2"));
             $nombreIdentidata = Str::lower(trim($personData->fullName));
 
-            Log::info("OCRService",[
+            Log::info("OCRService", [
                 'identidata' => [
                     'birthdateRequest' => $birthdateRequest,
                     'birthdateIdentidata' => $birthdateIdentidata,
@@ -53,10 +53,10 @@ class OCRService
         }
 
         // 2. OCR
-        $documentFro = $signatureRequest->documents
+        $documentFro = $signatureRequest->documents()
             ->where('type', DocumentTypes::$CEDULA_FRONTAL)->first();
 
-        $documentPos = $signatureRequest->documents
+        $documentPos = $signatureRequest->documents()
             ->where('type', DocumentTypes::$CEDULA_POSTERIOR)->first();
 
         if (!$documentFro || !$documentPos) {
@@ -67,14 +67,15 @@ class OCRService
         }
 
         $ocr = Dashscope::ocr(
-            base64_encode($documentFro->content()),
-            base64_encode($documentPos->content())
+            $documentFro->content(),
+            $documentPos->content()
         );
+
         $nroDocumento = preg_replace('/[^0-9]/', '', $ocr['numeroCedula']);
         $fechaRequest = Carbon::parse($signatureRequest->fecha_nacimiento)->toDateString();
         $fechaOcr = Carbon::parse($ocr['fechaNacimiento'])->toDateString();
 
-        Log::info("OCRService",[
+        Log::info("OCRService", [
             'ocr' => [
                 'nroDocumentoOcr' => $nroDocumento,
                 'nroDocumentoRequest' => $signatureRequest->nro_documento,
@@ -99,7 +100,6 @@ class OCRService
             ]);
             return false;
         }
-
         if (!preg_match('/^[A-Z]\d{4}[A-Z]\d{4}$/i', $ocr['codigoDactilar'])) {
             $signatureRequest->histories()->create([
                 'description' => "El código dactilar del OCR tiene un formato inválido: '{$ocr['codigoDactilar']}'.",

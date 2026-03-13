@@ -28,12 +28,23 @@ class HelperController extends Controller
 //
 //        return response()->json($result);
 
-        $sRequest = SignatureRequest::find(1);
+        $sRequest = SignatureRequest::find(2);
+
+        $sRequest2 = SignatureRequest::find(1);
+
 
         $result = OCRService::verifySignatureRequest($sRequest);
 
+        $result2 = OCRService::verifySignatureRequest($sRequest2);
+
         return response()->json([
             'verified' => $result,
+            'verified2' => $result2,
         ]);
+
+
+
+
+
     }
 }
